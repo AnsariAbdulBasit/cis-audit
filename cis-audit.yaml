@@ -1,0 +1,6 @@
+
+
+- name: Playbook to run CIS Audit 
+  hosts: target1 
+  roles:
+  - cis-audit

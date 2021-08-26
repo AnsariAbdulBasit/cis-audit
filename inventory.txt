@@ -1,0 +1,4 @@
+[unix_box_target1]
+target1 ansible_host=192.168.56.101 ansible_ssh_pass=root123
+#[unix_box_target2]
+#target2 ansible_host=192.168.56.13 ansible_ssh_pass=root123

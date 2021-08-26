@@ -1,0 +1,50 @@
+---
+# tasks file for cis-audit
+#
+
+- name: run my script!
+  script: sample_python.py
+  register: out
+  args:
+    executable: python
+#- debug: var=out.stdout_lines
+
+- name: check hostname
+  shell: hostname -f
+  register: hostname_fqdn
+
+- name: check today date
+  shell: date +"%Y%m%d"
+  register: date_name
+
+
+- name: creating dir for report by date
+  file:
+    path: /tmp/cis_audit_report
+    owner: root
+    group: root
+    state: directory
+    mode: 0755
+  delegate_to: localhost
+  run_once: true
+
+- name: creates report file
+  copy:
+    content: "{{ out.stdout_lines }}"
+    dest: /tmp/cis_audit_report/cis_summary_{{ hostname_fqdn.stdout }}_{{ date_name.stdout }}.txt
+    owner: root
+    group: root
+    mode: 0644
+  delegate_to: localhost
+  run_once: true
+
+- name: Fetch report 
+  fetch:
+    src: /tmp/cis_audit_report.txt
+    flat: yes
+    dest: /tmp/cis_audit_report/cis_detailed_report_{{ hostname_fqdn.stdout }}_{{ date_name.stdout }}.txt
+
+- name: Remove detailed report from remote machine
+  file:
+    path: /tmp/cis_audit_report.txt
+    state: absent
